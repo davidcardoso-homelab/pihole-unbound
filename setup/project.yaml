@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: pihole-unbound
+  namespace: argocd
+spec:
+  description: Projeto do Pi-hole Unbound gerenciado pelo ArgoCD
+  sourceRepos:
+    - 'git@github.com:davidcardoso-homelab/pihole-unbound.git'
+  destinations:
+    - namespace: pihole-unbound
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  orphanedResources:
+    warn: true

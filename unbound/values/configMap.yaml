@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: unbound-config
+data:
+  unbound.conf: |
+    server:
+      verbosity: 0
+      log-queries: no
+      log-replies: no
+      log-servfail: no
+      use-syslog: no
+      interface: 0.0.0.0
+      access-control: 0.0.0.0/0 allow
+
+      do-ip4: yes
+      do-udp: yes
+      do-tcp: yes
+
+      hide-identity: yes
+      hide-version: yes
+
+      qname-minimisation: yes
+      aggressive-nsec: yes
+      harden-glue: yes
+      harden-dnssec-stripped: yes
+      #   use-caps-for-id: yes
+      use-caps-for-id: no
+
+      edns-buffer-size: 1232
+      prefetch: yes
+      prefetch-key: yes
+
+      num-threads: 8
+      so-rcvbuf: 4m
+      so-sndbuf: 4m
+
+      cache-min-ttl: 300
+      cache-max-ttl: 14400
+
+      auto-trust-anchor-file: "/opt/unbound/etc/unbound/root.key"
+      root-hints: "/opt/unbound/etc/unbound/root.hints"
+      val-permissive-mode: no
+      val-clean-additional: yes
+

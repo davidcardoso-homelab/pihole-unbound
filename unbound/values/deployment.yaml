@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: unbound
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: unbound
+  template:
+    metadata:
+      labels:
+        app: unbound
+    spec:
+      initContainers:
+        - name: init-unbound
+          image: alpine:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apk add --no-cache unbound curl &&
+              curl -o /data/root.hints https://www.internic.net/domain/named.cache &&
+              unbound-anchor -a /data/root.key
+          volumeMounts:
+            - name: unbound-data
+              mountPath: /data
+      containers:
+        - name: unbound
+          image: mvance/unbound:latest
+          volumeMounts:
+            - name: unbound-data
+              mountPath: /opt/unbound/etc/unbound/
+            - name: unbound-config
+              mountPath: /opt/unbound/etc/unbound/unbound.conf
+              subPath: unbound.conf
+          resources:
+            requests:
+              memory: "50Mi"
+              cpu: "0.05"
+            limits:
+              memory: "250Mi"
+              cpu: "0.5"
+      volumes:
+        - name: unbound-data
+          persistentVolumeClaim:
+            claimName: unbound-pvc
+        - name: unbound-config
+          configMap:
+            name: unbound-config

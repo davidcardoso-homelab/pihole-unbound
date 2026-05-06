@@ -38,8 +38,8 @@ spec:
               memory: "50Mi"
               cpu: "0.05"
             limits:
-              memory: "250Mi"
-              cpu: "0.5"
+              memory: "1Gi"
+              cpu: "1"
       volumes:
         - name: unbound-data
           persistentVolumeClaim:

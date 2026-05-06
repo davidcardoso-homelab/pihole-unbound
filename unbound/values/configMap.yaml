@@ -14,6 +14,7 @@ data:
       access-control: 0.0.0.0/0 allow
 
       do-ip4: yes
+      do-ip6: no
       do-udp: yes
       do-tcp: yes
 
@@ -30,13 +31,25 @@ data:
       edns-buffer-size: 1232
       prefetch: yes
       prefetch-key: yes
+      msg-cache-size: 256m
+      rrset-cache-size: 512m
+      key-cache-size: 64m
+      neg-cache-size: 32m
 
       num-threads: 8
+      msg-cache-slabs: 8
+      rrset-cache-slabs: 8
+      infra-cache-slabs: 8
+      key-cache-slabs: 8
       so-rcvbuf: 4m
       so-sndbuf: 4m
 
       cache-min-ttl: 300
-      cache-max-ttl: 14400
+      cache-max-ttl: 86400
+      infra-cache-numhosts: 100000
+
+      outgoing-range: 8192
+      num-queries-per-thread: 4096
 
       auto-trust-anchor-file: "/opt/unbound/etc/unbound/root.key"
       root-hints: "/opt/unbound/etc/unbound/root.hints"

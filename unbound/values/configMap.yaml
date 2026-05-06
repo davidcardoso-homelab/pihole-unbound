@@ -5,12 +5,8 @@ metadata:
 data:
   unbound.conf: |
     server:
-      verbosity: 0
-      log-queries: no
-      log-replies: no
-      log-servfail: no
-      use-syslog: no
       interface: 0.0.0.0
+      port: 53
       access-control: 0.0.0.0/0 allow
 
       do-ip4: yes
@@ -18,41 +14,60 @@ data:
       do-udp: yes
       do-tcp: yes
 
-      hide-identity: yes
-      hide-version: yes
-
-      qname-minimisation: yes
-      aggressive-nsec: yes
-      harden-glue: yes
-      harden-dnssec-stripped: yes
-      #   use-caps-for-id: yes
-      use-caps-for-id: no
-
       edns-buffer-size: 1232
+
+      # Performance
       prefetch: yes
       prefetch-key: yes
+      num-threads: 2
+      so-reuseport: yes
+
       msg-cache-size: 256m
       rrset-cache-size: 512m
       key-cache-size: 64m
       neg-cache-size: 32m
 
-      num-threads: 8
-      msg-cache-slabs: 8
-      rrset-cache-slabs: 8
-      infra-cache-slabs: 8
-      key-cache-slabs: 8
-      so-rcvbuf: 4m
-      so-sndbuf: 4m
-
       cache-min-ttl: 300
       cache-max-ttl: 86400
-      infra-cache-numhosts: 100000
 
-      outgoing-range: 8192
-      num-queries-per-thread: 4096
+      # Privacidade
+      qname-minimisation: yes
+      aggressive-nsec: yes
 
+      # Segurança
+      harden-glue: yes
+      harden-dnssec-stripped: yes
+
+      # DNSSEC
       auto-trust-anchor-file: "/opt/unbound/etc/unbound/root.key"
       root-hints: "/opt/unbound/etc/unbound/root.hints"
-      val-permissive-mode: no
-      val-clean-additional: yes
+      tls-cert-bundle: /etc/ssl/certs/ca-certificates.crt
 
+      # Controle (para reload)
+      verbosity: 0
+      # logs estruturados
+      log-queries: yes
+      log-replies: yes
+
+      # útil pra debug de DNSSEC/TLS
+      log-servfail: yes
+
+      # opcional: identifica clientes
+      log-tag-queryreply: yes
+
+    # 🔐 Upstreams com load balance + fallback
+    forward-zone:
+      name: "."
+      forward-tls-upstream: yes
+      forward-first: yes
+
+      # Tier 1
+      forward-addr: 9.9.9.9@853#dns.quad9.net
+      forward-addr: 149.112.112.112@853#dns.quad9.net
+
+      forward-addr: 1.1.1.1@853#cloudflare-dns.com
+      forward-addr: 1.0.0.1@853#cloudflare-dns.com
+
+      # Tier 2
+      forward-addr: 94.140.14.14@853#adguard-dns.com
+      forward-addr: 94.140.15.15@853#adguard-dns.com

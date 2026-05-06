@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: unbound
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
       app: unbound
@@ -24,6 +24,7 @@ spec:
           volumeMounts:
             - name: unbound-data
               mountPath: /data
+
       containers:
         - name: unbound
           image: mvance/unbound:latest
@@ -38,8 +39,9 @@ spec:
               memory: "50Mi"
               cpu: "0.05"
             limits:
-              memory: "1Gi"
-              cpu: "1"
+              memory: "512Mi"
+              cpu: "0.5"
+
       volumes:
         - name: unbound-data
           persistentVolumeClaim:

@@ -8,20 +8,26 @@ spec:
     spec:
       template:
         spec:
+          serviceAccountName: unbound-cronjob
           containers:
-            - name: downloader
-              image: alpine:latest
+            - name: updater
+              image: bitnami/kubectl:latest
               command:
                 - /bin/sh
                 - -c
                 - |
-                  apk add --no-cache unbound curl &&
-                  curl -o /data/root.hints https://www.internic.net/domain/named.cache &&
-                  unbound-anchor -a /data/root.key
+                  set -e
+
+                  echo "Restarting Unbound deployment..."
+
+                  kubectl rollout restart deployment unbound -n pihole-unbound
+
               volumeMounts:
                 - name: unbound-data
                   mountPath: /data
+
           restartPolicy: OnFailure
+
           volumes:
             - name: unbound-data
               persistentVolumeClaim:

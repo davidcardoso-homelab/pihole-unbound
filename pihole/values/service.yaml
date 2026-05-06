@@ -6,6 +6,7 @@ metadata:
     metallb.io/address-pool: pool-local-dns
     metallb.universe.tf/loadBalancerIPs: 192.168.0.3
 spec:
+  externalTrafficPolicy: Local
   selector:
     app: pihole
   ports:

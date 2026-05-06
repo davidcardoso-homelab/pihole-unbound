@@ -73,6 +73,7 @@ unbound/
 ## Observações
 
 - O serviço LoadBalancer do Pi-hole ([`pihole/values/service.yaml`](pihole/values/service.yaml)) está anotado com o pool do MetalLB (`metallb.io/address-pool: pool-local-dns`) e será exposto no IP definido em [`pihole/setup/metallb-config.yaml`](pihole/setup/metallb-config.yaml) (exemplo: `192.168.0.3`).
+- Para preservar o IP real dos clientes DNS no Pi-hole, o Service LoadBalancer usa `externalTrafficPolicy: Local`. Sem isso, o tráfego pode chegar ao pod com NAT do cluster e o Pi-hole passa a registrar um IP interno, como `10.42.0.1`, em vez do IP do cliente.
 - O serviço ClusterIP do Pi-hole permite acesso ao painel web internamente e via Ingress.
 - O Ingress [`pihole/values/ingress.yaml`](pihole/values/ingress.yaml) permite acesso ao painel web do Pi-hole pelo endereço `dns.homelab`.
 - O volume persistente do Pi-hole é configurado para `/volumes/ssd/k3s/pihole` no host. Ajuste conforme necessário em [`pihole/values/persistent-volume.yaml`](pihole/values/persistent-volume.yaml).
